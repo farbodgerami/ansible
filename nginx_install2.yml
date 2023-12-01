@@ -1,0 +1,24 @@
+# refactored and multiple packages installed:
+- hosts: all
+  become: true
+  tasks:       
+  - name: installing multiple packages and update repository index
+    apt:
+      name: 
+      - nginx
+      - vlc
+      state: latest
+      update_cache: yes
+    when: ansible_distribution =="Ubuntu"
+  
+
+
+    
+  - name: installing multiple packages and update repository index
+    dnf:
+      name: 
+      - nginx
+      - vlc
+      state: latest
+      update_cache: yes
+    when: ansible_distribution =="CentOS"

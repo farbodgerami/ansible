@@ -1,0 +1,59 @@
+ansible all --key-file ~/.ssh/ansible -i inventory -u fbg -m ping
+-m means module
+after creating and using ansible.cfg
+ ansible all -u fbg -m ping
+ see hosts:
+ansible all --list-hosts
+gather infos from servers:
+ansible all -u fbg -m gather_facts
+gather info from 1 server:
+ansible all -u fbg -m gather_facts --limit 192.168.122.148
+
+its not working becouse of authentication
+ansible all -m apt -a update_cache = true
+so its needed to a way to get password:
+ansible all -m apt -a update_cache=true -u fbg --become --ask-become-pass
+install a package on a server:
+ansible all -m apt -a name=vim-nox -u fbg --become --ask-become-pass 
+to see wether its installed: apt search vim-nox
+show apt logs:
+/var/log/apt
+
+ansible all -m apt -a "upgrade=dist" -u fbg --become --ask-become-pass 
+
+working with  playbook:
+crate a yaml file
+write related yaml
+ansible-playbook -u fbg --ask-become-pass nginx_install.yml
+if one of servers is not apt, like centos, then we will have error
+to see os infos: cat /etc/os-release
+so in playbook when statement sould be used
+to get info from an specific server:
+ansible all -m gather_facts --limit ip  
+ansible all -m gather_facts --limit ip | grep ansible_distribution
+
+ansible-playbook --ask-become-pass -u fbg nginx_install.yml
+
+to consolidate use "{{packagename}} and in inventory:
+192.168.122.148  packageName1=nginx packageName2=vlc
+and instead of apt or dnf insert package. this means use whatever package manager is in that os
+
+making groups:
+in inventory:
+[web_servers]
+12.342.435.33
+[backend_server]
+44.55.22.655
+...
+
+now in yml file:
+- hosts: web_servers
+  become: true
+  tasks: ....
+tags:
+get tags from yml file:
+ansible-playbook --list-tags nginx_install.yml
+run with tags:
+ansible-playbook --tags centOS --ask-become-pass -u fbg nginx_install.yml
+multiple tag:
+ansible-playbook --tags "centOS,always" --ask-become-pass -u fbg nginx_install.yml

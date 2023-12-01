@@ -1,0 +1,13 @@
+# consolidate:
+- hosts: all
+  become: true
+  tasks:       
+  - name: installing multiple packages and update repository index
+    package:
+      name: 
+      - "{{packageName1}}"
+      - "{{packageName2}}"
+      state: latest
+      update_cache: yes
+    when: ansible_distribution =="Ubuntu"
+
